@@ -129,10 +129,13 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Scripts\carMovement.py" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+   xcopy /y "$(ProjectDir)$(OutDir)$(TargetFileName)" "$(ProjectDir)$(OutDir)..\..\..\Executable\."
+   xcopy /y "$(ProjectDir)$(OutDir)$(TargetFileName).config" "$(ProjectDir)$(OutDir)..\..\..\Executable\."
+)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
