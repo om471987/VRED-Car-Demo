@@ -1,7 +1,7 @@
 print "Executing find script!"
 
 newScene()
-loadGeometry("car.osb")
+loadGeometry("./car.osb")
 #nodes
 car = findNode("car")
 wheelBase_Front = findNode("WheelBase_Front")
@@ -59,15 +59,15 @@ def updateCameraPosition():
 
 def updateCarPosition():
 	setTransformNodeTranslation(car, carPosition[0], carPosition[1], 0, True)
-	updateCameraPosition()
-	isTireOnPuddle()
-	print "getPositions", getTransformNodeTranslation(car, true)
+	#updateCameraPosition()
+	#isTireOnPuddle()
+	#print "getPositions", getTransformNodeTranslation(car, true)
 
 
 def updateCarAngle():
 	car.setRotation(0, 0, carAngle[0])
-	updateCameraPosition()
-	print "getRotation", car.getRotation()
+	#updateCameraPosition()
+	#print "getRotation", car.getRotation()
 
 
 def updateTireRotation():

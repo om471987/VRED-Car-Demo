@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Windows;
 
 namespace VREDInterface
@@ -24,7 +25,8 @@ namespace VREDInterface
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            var url = string.Format(_baseLoad, UrlTextBox.Text, _pythonScript);
+            var path = Path.Combine(AssemblyDirectory, _pythonScript);
+            var url = string.Format(_baseLoad, UrlTextBox.Text, path);
             if (string.IsNullOrWhiteSpace(url) &&  !IsValidUrl(url))
             {
                 MessageBox.Show("Please enter valid url");
@@ -72,6 +74,16 @@ namespace VREDInterface
             Uri uriResult;
             bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult) && uriResult.Scheme == Uri.UriSchemeHttp;
             return result;
+        }
+        private static string AssemblyDirectory
+        {
+            get
+            {
+                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
     }
 }
