@@ -1,0 +1,24 @@
+﻿<Window x:Class="VREDInterface.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VREDInterface"
+        mc:Ignorable="d"
+        Title="Omkar Panhalkar - VRED Interface Demo" 
+        Height="350" 
+        Width="525"
+        Background="Gray"
+        Icon="Tesla_Logo.ico">
+    <Grid HorizontalAlignment="Left" Width="525" Margin="0,0,-8,0">
+        <Label x:Name="UrlLabel" Content="Enter VRED Server Url" HorizontalAlignment="Left" Margin="72,56,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="UrlTextBox" HorizontalAlignment="Left" Height="23" Margin="202,59,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="StartButton" Content="Start" HorizontalAlignment="Left" Margin="247,98,0,0" VerticalAlignment="Top" Width="75" Click="StartButton_Click"/>
+        <Slider x:Name="WheelbaseSlider" HorizontalAlignment="Left" Margin="233,176,0,0" VerticalAlignment="Top" Width="207" RenderTransformOrigin="0.495,-0.757" IsSnapToTickEnabled="True" Ticks="0, .5, 1, 1.5, 2, 2.5, 3" Minimum="0" Maximum ="3"  ValueChanged="WheelbaseSlider_Changed"/>
+        <Label x:Name="UpdateWheelbase" Content="Update Wheelbase" HorizontalAlignment="Left" Margin="87,172,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="WheelbaseValueMin" Content="0" HorizontalAlignment="Left" Margin="233,214,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="WheelbaseValueMax" Content="3" HorizontalAlignment="Left" Margin="424,214,0,0" VerticalAlignment="Top" RenderTransformOrigin="9.058,0.252"/>
+        <Label x:Name="WheelbaseValueLabel" Content="WheelbaseValue" HorizontalAlignment="Left" Margin="290,214,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="WheelbaseValue" Content="0" HorizontalAlignment="Left" Margin="334,245,0,0" VerticalAlignment="Top" />
+    </Grid>
+</Window>
