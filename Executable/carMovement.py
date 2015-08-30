@@ -16,26 +16,23 @@ tireRimFR = findNode("TireFR_mat_0")
 tireRR = findNode("TireRR_MultiMaterial")
 tireRimRR = findNode("TireRR_mat_0")
 steeringWheel = findNode("Steering_Transform")
-puddles = findNodes('puddleCone',True)
+puddles = findNode('puddleCone1')
 
 #materials
 waterColorMaterial = findMaterial("WaterColor")
 tireMaterial = findMaterial("Tire")
 
-updateScene()
-
-from time import sleep
-from math import sin, cos, pow
-
 #camera
-firstPersonCamera = [10, 30, 30]
-thirdPersonCamera = [0,100,50]
+firstPersonCamera = [10.0, 30.0, 30.0]
+thirdPersonCamera = [80.0,100.0,50.0]
 camera = [[], []]
-upVector = [-0.346251, 0.346252, 0.871906]
 
 #car
 carPosition = [0, 0]
 carAngle = [0]
+carSpeed = [1]
+maxSpeed = [1];
+rotSpeed = [1];
 
 #tire
 tireAxis = [2.00, 2.00]
@@ -51,24 +48,40 @@ wheelBasePosition = [25.40, 25.40, 25.40]
 wheelBaseDelta = [0.0]
 
 #puddle
-puddleRadius = [80.0]
+puddleRadiusSquare = [pow(80.0, 2)]
 
-def updateCameraPosition():
-	setFromAtUp(-1, carPosition[0] + camera[0][0], carPosition[1] + camera[0][1], camera[0][2], camera[1][0], camera[1][1], camera[1][2], upVector[0], upVector[1], upVector[2])
+from time import sleep
+from math import sin, cos, fabs, radians, pi, pow
+
+def updateCamera():
+	carTra = car.getTranslation()
+	fromPtr = Pnt3f(carTra[0] + camera[0][0],carTra[1] + camera[0][1], camera[0][2])
+	toPtr = Pnt3f(carTra[0],carTra[1],carTra[2])
+	setFromAtUp(-1, fromPtr, toPtr, getUp(-1))
 	
+	
+def aswd(anglularForce, translateForce):
+	rotation = car.getRotation()[2]
+	x = car.getTranslation()[0]
+	y = car.getTranslation()[1]
+	
+	if anglularForce != 0:
+		rotation += anglularForce * rotSpeed[0]
+		steetingAngle[0] += anglularForce * 1
+		tireAngleLeft[0] += anglularForce * 1
+		tireAngleRight[0] += anglularForce * 1
+		car.setRotation(0, 0, rotation)
+		updateTireAngle()
+		updateSteeringAngle()
 
-def updateCarPosition():
-	setTransformNodeTranslation(car, carPosition[0], carPosition[1], 0, True)
-	#updateCameraPosition()
-	#isTireOnPuddle()
-	#print "getPositions", getTransformNodeTranslation(car, true)
-
-
-def updateCarAngle():
-	car.setRotation(0, 0, carAngle[0])
-	#updateCameraPosition()
-	#print "getRotation", car.getRotation()
-
+	if translateForce != 0:
+		x += maxSpeed[0] * translateForce * sin(radians(rotation))
+		y -= maxSpeed[0] * translateForce * cos(radians(rotation))
+		tireAxis[0] -= -1 * translateForce * tireSpeed[0]
+		tireAxis[1] += -1 * translateForce * tireSpeed[0]		
+		car.setTranslation(x, y, 0)
+		updateTireRotation()
+	updateCamera()
 
 def updateTireRotation():
 	setTransformNodeRotation(tireFL, 1.0, tireAxis[0], -90.0)
@@ -86,67 +99,30 @@ def updateTireAngle():
 def updateSteeringAngle():
 	setTransformNodeRotation(steeringWheel, steetingAngle[0], 0, 90)
 	
-def translateFront():
-	carPosition[0] -= 1 * sin(carAngle[0])
-	carPosition[1] -= 1 * cos(carAngle[0])
-	tireAxis[0] += tireSpeed[0]
-	tireAxis[1] -= tireSpeed[0]	
-	updateCarPosition()
-	updateTireRotation()
-
-
-def translateBack():
-	carPosition[0] += 1 * sin(carAngle[0])
-	carPosition[1] += 1 * cos(carAngle[0])
-	tireAxis[0] -= tireSpeed[0]
-	tireAxis[1] += tireSpeed[0]	
-	updateCarPosition()
-	updateTireRotation()
-
-
-def rotateLeft():
-	carAngle[0] += 1
-	steetingAngle[0] += 1
-	tireAngleLeft[0] += 1
-	tireAngleRight[0] += 1
-	updateCarAngle()
-	updateTireAngle()
-	updateSteeringAngle()
-
-
-def rotateRight():
-	carAngle[0] -= 1
-	steetingAngle[0] -= 1
-	tireAngleLeft[0] -= 1
-	tireAngleRight[0] -= 1	
-	updateCarAngle()
-	updateTireAngle()
-	updateSteeringAngle()
-
 def isTireOnPuddle():
 	locationFL = getTransformNodeTranslation(tireFL, true)
 	locationRL = getTransformNodeTranslation(tireRL, true)
 	locationFR = getTransformNodeTranslation(tireFR, true)
 	locationRR = getTransformNodeTranslation(tireRR, true)
 	
-	for puddle in puddles:
-		puddleLocation = getTransformNodeTranslation(puddle, true)
-		if (pow((locationFL.x() - puddleLocation.x()), 2) + pow((locationFL.y() - puddleLocation.y()), 2)) <= pow(puddleRadius[0], 2):
-			soakTireFL()
-		else:
-			dryUpTireFL()
-		if (pow((locationRL.x() - puddleLocation.x()), 2) + pow((locationRL.y() - puddleLocation.y()), 2)) <= pow(puddleRadius[0], 2):
-			soakTireRL()
-		else:
-			dryUpTireRL()
-		if (pow((locationFR.x() - puddleLocation.x()), 2) + pow((locationFR.y() - puddleLocation.y()), 2)) <= pow(puddleRadius[0], 2):
-			soakTireFR()
-		else:
-			dryUpTireFR()
-		if (pow((locationRR.x() - puddleLocation.x()), 2) + pow((locationRR.y() - puddleLocation.y()), 2)) <= pow(puddleRadius[0], 2):
-			soakTireRR()
-		else:
-			dryUpTireRR()
+	#for puddle in puddles:
+	puddleLocation = getTransformNodeTranslation(puddles, true)
+	if (pow((locationFL.x() - puddleLocation.x()), 2) + pow((locationFL.y() - puddleLocation.y()), 2)) <= puddleRadiusSquare[0]:
+		soakTireFL()
+	else:
+		dryUpTireFL()
+	if (pow((locationRL.x() - puddleLocation.x()), 2) + pow((locationRL.y() - puddleLocation.y()), 2)) <= puddleRadiusSquare[0]:
+		soakTireRL()
+	else:
+		dryUpTireRL()
+	if (pow((locationFR.x() - puddleLocation.x()), 2) + pow((locationFR.y() - puddleLocation.y()), 2)) <= puddleRadiusSquare[0]:
+		soakTireFR()
+	else:
+		dryUpTireFR()
+	if (pow((locationRR.x() - puddleLocation.x()), 2) + pow((locationRR.y() - puddleLocation.y()), 2)) <= puddleRadiusSquare[0]:
+		soakTireRR()
+	else:
+		dryUpTireRR()
 			
 	
 def soakTireFL():
@@ -170,13 +146,13 @@ def dryUpTireRR():
 def changeView():
 	if camera[0] is thirdPersonCamera:
 		camera[0] = firstPersonCamera
-		camera[1] = [carPosition[0], carPosition[1] - 20, 20]
+		#camera[1] = [carPosition[0], carPosition[1] - 20, 20]
 		print "First Camera View"
 	else:
 		camera[0] = thirdPersonCamera
-		camera[1] = [carPosition[0], carPosition[1], 0]
+		#camera[1] = [carPosition[0], carPosition[1], 0]
 		print "Third Camera View"
-	updateCameraPosition()
+	updateCamera()
 
 def updateWheelBase(sliderValue):
 	carPosition = [0, 0]
@@ -194,22 +170,32 @@ def updateWheelBase(sliderValue):
 	wheelBase.setScale(wheelBasePosition[0] + wheelBaseDelta[0], wheelBasePosition[1], wheelBasePosition[2])
 	print wheelBase.getScale()
 	
-keyW = vrKey(Key_W)
-keyW.connect(translateFront)
-
-keyS = vrKey(Key_S)
-keyS.connect(translateBack)
-
-keyA = vrKey(Key_A)
-keyA.connect(rotateLeft)
-
-keyD = vrKey(Key_D)
-keyD.connect(rotateRight)
+w = vrKey(Key_W)
+w.connect(aswd, 0.0, 1.0)
+s = vrKey(Key_S)
+s.connect(aswd, 0.0, -1.0)
+a = vrKey(Key_A)
+a.connect(aswd, -1.0, 0.0)
+d = vrKey(Key_D)
+d.connect(aswd, 1.0, 0.0)
 
 keyC = vrKey(Key_C)
 keyC.connect(changeView)
 
 changeView()
-updateCarPosition()
+
+cameraAnglea = [0,0]
+def cameraAngle(x, y):
+	cameraAnglea[0] += x
+	cameraAnglea[1] += y
+	setCameraRotation(cameraAnglea[0], cameraAnglea[1])
+	cam = getCamNode(-1)
+	print "cam angle", cam.getRotation()
+
+key1 = vrKey(Key_1)
+key1.connect(cameraAngle, 0.01, 0)
+
+key2 = vrKey(Key_2)
+key2.connect(cameraAngle, -0.01, 0)
 
 print("this should come on log")
