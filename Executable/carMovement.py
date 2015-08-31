@@ -42,10 +42,6 @@ tireTurnSpeed = [.4]
 steeringAngle = list(steeringWheel.getRotation())
 steeringTurnSpeed = [3]
 
-#Wheelbase
-wheelBasePosition = [25.40, 25.40, 25.40]
-wheelBaseDelta = [0.0]
-
 #puddle
 puddleAxis = [[0, 400], [400,0], [-400,0], [200,200], [-200,200],[200,-200], [-200,-200]]
 for i, t in enumerate(puddleAxis):
@@ -79,9 +75,9 @@ def aswd(anglularForce, translateForce):
 	
 	if anglularForce != 0:
 		rotation += anglularForce * carTurnSpeed[0]
-		steeringAngle[0] += anglularForce * steeringTurnSpeed[0] * 1
-		tireAngleLeft[0] += anglularForce * tireTurnSpeed[0] * 1
-		tireAngleRight[0] += anglularForce * tireTurnSpeed[0] * 1
+		steeringAngle[0] += anglularForce * steeringTurnSpeed[0]
+		tireAngleLeft[0] += anglularForce * tireTurnSpeed[0]
+		tireAngleRight[0] += anglularForce * tireTurnSpeed[0]
 		car.setRotation(0, 0, rotation)
 		updateTireAngle()
 		updateSteeringAngle()
@@ -141,23 +137,20 @@ def changeView():
 	else:
 		camera[0] = thirdPersonCamera
 		print "Third Camera View"
-	rotation = car.getRotation()[2]
 	aswd(0.0, 1.0)
 
-def updateWheelBase(sliderValue):
-	delta = sliderValue - wheelBaseDelta[0]
-	wheelBaseDelta[0] = sliderValue
-
-	#x = a[0] + sin(radians(carRot[2]))
-	#y = a[1] + cos(radians(carRot[2]))
+def updateWheelBase(sliderChangedValue):
+	scale = list(wheelBase.getScale())
+	scale[0] +=  sliderChangedValue
+	wheelBase.setScale(scale[0], scale[1], scale[2])
 	
-	aa = getTransformNodeTranslation(wheelBase_Front, true)
-	setTransformNodeTranslation(wheelBase_Front, aa.x(), aa.y() - (delta / 2), aa.z(), True)
-
-	aa = getTransformNodeTranslation(wheelBase_Back, true)
-	setTransformNodeTranslation(wheelBase_Back, aa.x(), aa.y() + (delta / 2), aa.z(), True)
-
-	wheelBase.setScale(wheelBasePosition[0] + wheelBaseDelta[0], wheelBasePosition[1], wheelBasePosition[2])
+	front = list(wheelBase_Front.getTranslation())
+	front[1] -= (sliderChangedValue / 2)
+	wheelBase_Front.setTranslation(front[0], front[1], front[2])
+	
+	back = list(wheelBase_Back.getTranslation())
+	back[1] += (sliderChangedValue / 2)
+	wheelBase_Back.setTranslation(back[0], back[1], back[2])
 	
 w = vrKey(Key_W)
 w.connect(aswd, 0.0, 1.0)
@@ -175,5 +168,5 @@ keyC = vrKey(Key_C)
 keyC.connect(changeView)
 
 changeView()
-	
+
 print("this should come on log")

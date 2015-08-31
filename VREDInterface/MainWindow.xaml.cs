@@ -16,11 +16,13 @@ namespace VREDInterface
         private string _pythonScript = ConfigurationManager.AppSettings["PythonScript"];
         private string _baseLoad = "{0}/python?value=load(\"{1}\")";
         private string _baseEval = "{0}/pythoneval?value={1}";
+        private double previousSliderValue;
 
         public MainWindow()
         {
             InitializeComponent();
             UrlTextBox.Text = _vredServerUrl;
+            previousSliderValue = WheelbaseSlider.Value;
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -33,16 +35,17 @@ namespace VREDInterface
             }
             else
             {
-                WheelbaseSlider.Value = 0;
+                previousSliderValue = WheelbaseSlider.Value = 0;
                 SendMessageToVRED(url);
             }
         }
 
         private void WheelbaseSlider_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var command = @"updateWheelBase(" + WheelbaseSlider.Value + ")";
+            var delta = WheelbaseSlider.Value - previousSliderValue;
+            previousSliderValue = WheelbaseSlider.Value;
+            var command = @"updateWheelBase(" + delta + ")";
             var url = string.Format(_baseEval, UrlTextBox.Text, command);
-            WheelbaseValue.Content = WheelbaseSlider.Value;
             SendMessageToVRED(url);
         }
         private void SendMessageToVRED(string url)
