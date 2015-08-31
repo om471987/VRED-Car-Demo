@@ -24,7 +24,7 @@ tireMaterial = findMaterial("Tire")
 
 #camera
 firstPersonCamera = [10.0, 40.0, 30.0]
-thirdPersonCamera = [80.0, 140.0, 50.0]
+thirdPersonCamera = [150.0, 30.0, 50.0]#angle constant and z axis
 camera = [[]]
 
 #car
@@ -36,7 +36,7 @@ tireAxis = [2.00, 2.00]
 tireSpeed = [15.0]
 tireAngleLeft = [-90]
 tireAngleRight = [90]
-tireTurnSpeed = [1]
+tireTurnSpeed = [.6]
 
 #Steering Wheel
 steeringAngle = list(steeringWheel.getRotation())
@@ -60,14 +60,15 @@ collisionTireRR = vrCollision([tireRR], puddles)
 from time import sleep
 from math import sin, cos, radians
 
-def updateCamera():
+'''def updateCamera():
 	carTra = car.getTranslation()
 	carRot = car.getRotation()
-	x = carTra[0] + sin(radians(carRot[2]))
-	y = carTra[1] + cos(radians(carRot[2]))	
-	fromPtr = Pnt3f(x + camera[0][0], y + camera[0][1], camera[0][2])
-	toPtr = Pnt3f(x, y, camera[0][2])
-	setFromAtUp(-1, fromPtr, toPtr, getUp(-1))
+	x = camera[0][0] + carSpeed[0] *  sin(radians(rotation))
+	y = camera[0][1] - carSpeed[0] *  cos(radians(rotation))	
+	print x, ",", y
+	fromPtr = Pnt3f(carTra[0] + x, carTra[1] + y, camera[0][2])
+	toPtr = Pnt3f(carTra[0], carTra[1], camera[0][2])
+	setFromAtUp(-1, fromPtr, toPtr, getUp(-1))'''
 
 
 def aswd(anglularForce, translateForce):
@@ -91,7 +92,12 @@ def aswd(anglularForce, translateForce):
 		tireAxis[1] += -1 * translateForce * tireSpeed[0]		
 		car.setTranslation(x, y, 0)
 		updateTireRotation()
-	updateCamera()
+		
+	aa = x + carSpeed[0] * 1 * camera[0][1] * sin(radians(rotation + (camera[0][0])))
+	bb = y - carSpeed[0] * 1 * camera[0][1] * cos(radians(rotation + (camera[0][0])))
+	fromPtr = Pnt3f(camera[0][0] + aa, camera[0][1] + bb, camera[0][2])
+	toPtr = Pnt3f(x, y, camera[0][2])
+	setFromAtUp(-1, fromPtr, toPtr, getUp(-1))	
 	isTireOnPuddle()
 
 def updateTireRotation():
@@ -139,7 +145,12 @@ def changeView():
 	else:
 		camera[0] = thirdPersonCamera
 		print "Third Camera View"
-	updateCamera()
+	aa = camera[0][1] * sin(radians(camera[0][0]))
+	bb = camera[0][1] * cos(radians(camera[0][0]))
+	fromPtr = Pnt3f(camera[0][0] + aa, camera[0][1] + bb, camera[0][2])
+	cc = car.getTranslation()
+	toPtr = Pnt3f(cc[0], cc[1], camera[0][2])
+	setFromAtUp(-1, fromPtr, toPtr, getUp(-1))
 
 def updateWheelBase(sliderValue):
 	delta = sliderValue - wheelBaseDelta[0]
@@ -181,18 +192,15 @@ keyC = vrKey(Key_C)
 keyC.connect(changeView)
 
 changeView()
-'''cameraAnglea = [0,0]
-def cameraAngle(x, y):
-	cameraAnglea[0] += x
-	cameraAnglea[1] += y
-	setCameraRotation(cameraAnglea[0], cameraAnglea[1])
-	cam = getCamNode(-1)
-	print "cam angle", cam.getRotation()
+
+'''def cameraAngle(x):
+	camera[0][0] +=  x
+	updateCamera()
 
 key1 = vrKey(Key_1)
-key1.connect(cameraAngle, 0.01, 0)
+key1.connect(cameraAngle, 1)
 
 key2 = vrKey(Key_2)
-key2.connect(cameraAngle, -0.01, 0)'''
+key2.connect(cameraAngle, -1)'''
 
 print("this should come on log")
