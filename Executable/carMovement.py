@@ -1,7 +1,11 @@
-print "Executing find script!"
+print("Python script loading started")
 
 newScene()
 loadGeometry("car.osb")
+
+from time import sleep
+from math import sin, cos, radians
+from threading import Thread, Lock
 
 #nodes
 car = findNode("car")
@@ -24,8 +28,8 @@ waterColorMaterial = findMaterial("WaterColor")
 tireMaterial = findMaterial("Tire")
 
 #camera
-firstPersonCamera = [180.0, 40.0, 35.0]
-thirdPersonCamera = [150.0, 176.0, 50.0]#angle, constant and z axis
+firstPersonCamera = [180.0, 40.0, 35.0]#angle, constant and z axis
+thirdPersonCamera = [150.0, 176.0, 50.0]
 camera = [[]]
 
 #car
@@ -42,6 +46,10 @@ steeringTurnSpeed = [3]
 
 #puddle
 puddleAxis = [[0, 400], [400,0], [-400,0], [200,200], [-200,200],[200,-200], [-200,-200]]
+lock = Lock()
+
+dryTimeout = [0, 0, 0, 0]
+
 for i, t in enumerate(puddleAxis):
 	newPuddle = puddles[0].copy()
 	newPuddle.setName("puddleCone" + str(i + 2))
@@ -53,8 +61,6 @@ collisionTireFR = vrCollision([tireFR], puddles)
 collisionTireRL = vrCollision([tireRL], puddles)
 collisionTireRR = vrCollision([tireRR], puddles)
 
-from time import sleep
-from math import sin, cos, radians
 
 def updateCamera(x, y, rotation):
 	aa = x + camera[0][1] * sin(radians(rotation + (camera[0][0])))
@@ -114,25 +120,50 @@ def updateSteeringAngle(anglularForce):
 	steeringWheel.setRotation(steeringAngle, 0.0, 90.0)
 	
 def isTireOnPuddle():
-	if collisionTireFL.isColliding() and tireRimFL.getMaterial() is not waterColorMaterial:
+	if collisionTireFL.isColliding() and tireRimFL.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimFL.setMaterial(waterColorMaterial)
-	elif collisionTireFL.isColliding() == False and tireRimFL.getMaterial() is not tireMaterial:
-		tireRimFL.setMaterial(tireMaterial)
+	elif collisionTireFL.isColliding() == False and tireRimFL.getMaterial().getName() != tireMaterial.getName():
+		lock.acquire()
+		if dryTimeout[0] == 2:
+			tireRimFL.setMaterial(tireMaterial)
+			dryTimeout[0] = 0
+		elif dryTimeout[0] == 0:
+			dryTimeout[0] = 1
+		lock.release()
+			
 		
-	if collisionTireFR.isColliding() and tireRimFR.getMaterial() is not waterColorMaterial:
+	if collisionTireFR.isColliding() and tireRimFR.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimFR.setMaterial(waterColorMaterial)
-	elif collisionTireFR.isColliding() == False and tireRimFR.getMaterial() is not tireMaterial:
-		tireRimFR.setMaterial(tireMaterial)
+	elif collisionTireFR.isColliding() == False and tireRimFR.getMaterial().getName() != tireMaterial.getName():
+		lock.acquire()
+		if dryTimeout[1] == 2:
+			tireRimFR.setMaterial(tireMaterial)
+			dryTimeout[1] = 0
+		elif dryTimeout[1] == 0:
+			dryTimeout[1] = 1
+		lock.release()
 
-	if collisionTireRL.isColliding() and tireRimRL.getMaterial() is not waterColorMaterial:
+	if collisionTireRL.isColliding() and tireRimRL.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimRL.setMaterial(waterColorMaterial)
-	elif collisionTireRL.isColliding() == False and tireRimRL.getMaterial() is not tireMaterial:
-		tireRimRL.setMaterial(tireMaterial)
+	elif collisionTireRL.isColliding() == False and tireRimRL.getMaterial().getName() != tireMaterial.getName():
+		lock.acquire()
+		if dryTimeout[2] == 2:
+			tireRimRL.setMaterial(tireMaterial)
+			dryTimeout[2] = 0
+		elif dryTimeout[2] == 0:
+			dryTimeout[2] = 1
+		lock.release()
 		
-	if collisionTireRR.isColliding() and tireRimRR.getMaterial() is not waterColorMaterial:
+	if collisionTireRR.isColliding() and tireRimRR.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimRR.setMaterial(waterColorMaterial)
-	elif collisionTireRR.isColliding() == False and tireRimRR.getMaterial() is not tireMaterial:
-		tireRimRR.setMaterial(tireMaterial)
+	elif collisionTireRR.isColliding() == False and tireRimRR.getMaterial().getName() != tireMaterial.getName():
+		lock.acquire()
+		if dryTimeout[3] == 2:
+			tireRimRR.setMaterial(tireMaterial)
+			dryTimeout[3] = 0
+		elif dryTimeout[3] == 0:
+			dryTimeout[3] = 1
+		lock.release()
 
 
 def changeView():
@@ -174,4 +205,31 @@ keyC.connect(changeView)
 
 changeView()
 
-print("this should come on log")
+class DryTiresAfterAWhile(Thread):
+	def __init__(self, dryTimeout, lock):
+		Thread.__init__(self)
+		self.running = True
+		self.dryTimeout = dryTimeout
+		self.lock = lock
+
+	def run(self):
+		while self.running:
+			self.lock.acquire()
+			if dryTimeout[0] == 1:
+				dryTimeout[0] = 2
+			if dryTimeout[1] == 1:
+				dryTimeout[1] = 2
+			if dryTimeout[2] == 1:
+				dryTimeout[2] = 2
+			if dryTimeout[3] == 1:
+				dryTimeout[3] = 2
+			self.lock.release()
+			sleep(2)
+
+	def terminate(self):
+		self.running = False
+
+thread = DryTiresAfterAWhile(dryTimeout, lock)
+thread.start()
+
+print("Python script loading completed")
