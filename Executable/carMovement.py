@@ -35,12 +35,9 @@ carTurnSpeed = [3]
 #tire
 tireAxis = [2.00, 2.00]
 tireSpeed = [15.0]
-tireAngleLeft = [-90]
-tireAngleRight = [90]
 tireTurnSpeed = [.4]
 
 #Steering Wheel
-steeringAngle = list(steeringWheel.getRotation())
 steeringTurnSpeed = [3]
 
 #puddle
@@ -76,38 +73,45 @@ def aswd(anglularForce, translateForce):
 	
 	if anglularForce != 0:
 		rotation += anglularForce * carTurnSpeed[0]
-		steeringAngle[0] += anglularForce * steeringTurnSpeed[0]
-		tireAngleLeft[0] += anglularForce * tireTurnSpeed[0]
-		tireAngleRight[0] += anglularForce * tireTurnSpeed[0]
 		car.setRotation(0, 0, rotation)
-		updateTireAngle()
-		updateSteeringAngle()
+		updateTireAngle(anglularForce)
+		updateSteeringAngle(anglularForce)
 
 	if translateForce != 0:
 		x += carSpeed[0] * translateForce * sin(radians(rotation))
-		y -= carSpeed[0] * translateForce * cos(radians(rotation))
-		tireAxis[0] += translateForce * tireSpeed[0]
-		tireAxis[1] -= translateForce * tireSpeed[0]		
+		y -= carSpeed[0] * translateForce * cos(radians(rotation))		
 		car.setTranslation(x, y, 0)
-		updateTireRotation()
+		updateTireRotation(translateForce)
 	updateCamera(x, y, rotation)
 	isTireOnPuddle()
 
-def updateTireRotation():
-	setTransformNodeRotation(tireFL, 1.0, tireAxis[0], -90.0)
-	setTransformNodeRotation(tireRL, 1.0, tireAxis[0], -90.0)
-	setTransformNodeRotation(tireFR, 1.0, tireAxis[1], 90.0)
-	setTransformNodeRotation(tireRR, 1.0, tireAxis[1], 90.0)
+def updateTireRotation(translateForce):
+	leftTires = list(tireFL.getRotation())
+	rightTires = list(tireFR.getRotation())
+	leftTires[1] += translateForce * tireSpeed[0]
+	rightTires[1] -= translateForce * tireSpeed[0]
+	
+	tireFL.setRotation(1.0, leftTires[1], -90.0)
+	tireRL.setRotation(1.0, leftTires[1], -90.0)
+	tireFR.setRotation(1.0, rightTires[1], 90.0)
+	tireRR.setRotation(1.0, rightTires[1], 90.0)
 
-def updateTireAngle():
-	tireFL.setRotation(1, 1, tireAngleLeft[0])
-	tireRL.setRotation(1, 1, tireAngleLeft[0])
-	tireFR.setRotation(1, 1, tireAngleRight[0])
-	tireRR.setRotation(1, 1, tireAngleRight[0])	
+def updateTireAngle(anglularForce):
+	leftRotation = tireFL.getRotation()[2]
+	leftRotation += anglularForce * tireTurnSpeed[0]
+	tireFL.setRotation(0.0, 0.0, leftRotation)
+	tireRL.setRotation(0.0, 0.0, leftRotation)
+	
+	rightRotation = tireFR.getRotation()[2]
+	rightRotation += anglularForce * tireTurnSpeed[0]
+	tireFR.setRotation(0.0, 0.0, rightRotation)
+	tireRR.setRotation(0.0, 0.0, rightRotation)	
 
 
-def updateSteeringAngle():
-	setTransformNodeRotation(steeringWheel, steeringAngle[0], 0, 90)
+def updateSteeringAngle(anglularForce):
+	steeringAngle = list(steeringWheel.getRotation())[0]
+	steeringAngle += anglularForce * steeringTurnSpeed[0]
+	steeringWheel.setRotation(steeringAngle, 0.0, 90.0)
 	
 def isTireOnPuddle():
 	if collisionTireFL.isColliding() and tireRimFL.getMaterial() is not waterColorMaterial:
