@@ -12,13 +12,19 @@
         Icon="Tesla_Logo.ico">
     <Grid HorizontalAlignment="Left" Width="525" Margin="0,0,-8,0">
         <Label x:Name="UrlLabel" Content="Enter VRED Server Url" HorizontalAlignment="Left" Margin="72,56,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="UrlTextBox" HorizontalAlignment="Left" Height="23" Margin="202,59,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="StartButton" Content="Start" HorizontalAlignment="Left" Margin="247,98,0,0" VerticalAlignment="Top" Width="75" Click="StartButton_Click"/>
-        <Slider x:Name="WheelbaseSlider" HorizontalAlignment="Left" Margin="233,176,0,0" VerticalAlignment="Top" Width="207" RenderTransformOrigin="0.495,-0.757" IsSnapToTickEnabled="True" Ticks="0, .5, 1, 1.5, 2, 2.5, 3" Minimum="0" Maximum ="3"  ValueChanged="WheelbaseSlider_Changed"/>
-        <Label x:Name="UpdateWheelbase" Content="Update Wheelbase" HorizontalAlignment="Left" Margin="87,172,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="WheelbaseValueMin" Content="0" HorizontalAlignment="Left" Margin="233,214,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="WheelbaseValueMax" Content="3" HorizontalAlignment="Left" Margin="424,214,0,0" VerticalAlignment="Top" RenderTransformOrigin="9.058,0.252"/>
-        <Label x:Name="WheelbaseValueLabel" Content="WheelbaseValue" HorizontalAlignment="Left" Margin="290,214,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="WheelbaseValue" Content="0" HorizontalAlignment="Left" Margin="334,245,0,0" VerticalAlignment="Top" />
+        <TextBox x:Name="UrlTextBox" HorizontalAlignment="Left" Height="23" Margin="233,59,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="StartButton" Content="Start" HorizontalAlignment="Left" Margin="278,96,0,0" VerticalAlignment="Top" Width="75" Click="StartButton_Click"/>
+        <Slider x:Name="WheelbaseSlider" HorizontalAlignment="Left" Margin="233,162,0,0" VerticalAlignment="Top" Width="207" RenderTransformOrigin="0.495,-0.757" IsSnapToTickEnabled="True" Ticks="0, .5, 1, 1.5, 2, 2.5, 3" Minimum="0" Maximum ="3"  ValueChanged="WheelbaseSlider_Changed"/>
+        <Label x:Name="UpdateWheelbase" Content="Update Wheelbase" HorizontalAlignment="Left" Margin="72,158,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="WheelbaseValueMin" Content="0" HorizontalAlignment="Left" Margin="233,177,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.438,1.385"/>
+        <Label x:Name="WheelbaseValueMax" Content="3" HorizontalAlignment="Left" Margin="424,177,0,0" VerticalAlignment="Top" RenderTransformOrigin="9.058,0.252"/>
+        <Label x:Name="WheelbaseValueLabel" Content="WheelbaseValue" HorizontalAlignment="Left" Margin="287,144,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="WheelbaseValue" Content="0" HorizontalAlignment="Left" Margin="326,177,0,0" VerticalAlignment="Top" />
+        <Label x:Name="HotKeyList" Content="HotKeys" HorizontalAlignment="Left" Margin="72,222,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.241,-0.692" />
+        <Label x:Name="UpKey" Content="W - Forward" HorizontalAlignment="Left" Margin="190,253,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.241,-0.692" />
+        <Label x:Name="DownKey" Content="S - Backward" HorizontalAlignment="Left" Margin="326,222,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.241,-0.692" />
+        <Label x:Name="LeftKey" Content="A - Left turn" HorizontalAlignment="Left" Margin="188,222,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.241,-0.692" />
+        <Label x:Name="RightKey" Content="D - Right turn" HorizontalAlignment="Left" Margin="326,251,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.241,-0.692" />
+        <Label x:Name="CameraChangeKey" Content="C - First Person/Third Person" HorizontalAlignment="Left" Margin="190,282,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.241,-0.692" />
     </Grid>
 </Window>
