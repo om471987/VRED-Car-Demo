@@ -1,7 +1,8 @@
 print "Executing find script!"
 
 newScene()
-loadGeometry("./car.osb")
+loadGeometry("car.osb")
+
 #nodes
 car = findNode("car")
 wheelBase_Front = findNode("WheelBase_Front")
@@ -23,8 +24,8 @@ waterColorMaterial = findMaterial("WaterColor")
 tireMaterial = findMaterial("Tire")
 
 #camera
-firstPersonCamera = [180.0, 5.0, 35.0]
-thirdPersonCamera = [150.0, 22.0, 50.0]#angle, constant and z axis
+firstPersonCamera = [180.0, 40.0, 35.0]
+thirdPersonCamera = [150.0, 176.0, 50.0]#angle, constant and z axis
 camera = [[]]
 
 #car
@@ -59,11 +60,11 @@ from time import sleep
 from math import sin, cos, radians
 
 def updateCamera(x, y, rotation):
-	aa = x + carSpeed[0] * camera[0][1] * sin(radians(rotation + (camera[0][0])))
-	bb = y - carSpeed[0] * camera[0][1] * cos(radians(rotation + (camera[0][0])))
+	aa = x + camera[0][1] * sin(radians(rotation + (camera[0][0])))
+	bb = y - camera[0][1] * cos(radians(rotation + (camera[0][0])))
 	fromPtr = Pnt3f(aa, bb, camera[0][2])
-	firstX = x + camera[0][1] * sin(radians(rotation + (camera[0][0])))
-	firstY = y - camera[0][1] * cos(radians(rotation + (camera[0][0])))
+	firstX = x + sin(radians(rotation + (camera[0][0])))
+	firstY = y - cos(radians(rotation + (camera[0][0])))
 	toPtr = Pnt3f(firstX, firstY, camera[0][2])
 	setFromAtUp(-1, fromPtr, toPtr, getUp(-1))	
 
@@ -85,8 +86,8 @@ def aswd(anglularForce, translateForce):
 	if translateForce != 0:
 		x += carSpeed[0] * translateForce * sin(radians(rotation))
 		y -= carSpeed[0] * translateForce * cos(radians(rotation))
-		tireAxis[0] -= -1 * translateForce * tireSpeed[0]
-		tireAxis[1] += -1 * translateForce * tireSpeed[0]		
+		tireAxis[0] += translateForce * tireSpeed[0]
+		tireAxis[1] -= translateForce * tireSpeed[0]		
 		car.setTranslation(x, y, 0)
 		updateTireRotation()
 	updateCamera(x, y, rotation)
