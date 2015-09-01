@@ -4,6 +4,9 @@
              xmlns:local="clr-namespace:VREDInterface"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="FontSize"
+            Value="18" />
+        </Style>
     </Application.Resources>
 </Application>
