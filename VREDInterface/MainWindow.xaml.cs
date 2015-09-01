@@ -57,18 +57,8 @@ namespace VREDInterface
                 var httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 httpWebResponse.Close();
             }
-            catch (WebException exception)
+            catch
             {
-                var responseMessage = "";
-                if (exception != null && exception.Response != null)
-                {
-                    responseMessage = new StreamReader(exception.Response.GetResponseStream()).ReadToEnd();
-                }
-                else
-                {
-                    responseMessage = exception.ToString();
-                }
-                //MessageBox.Show("Error while messaging VRED. Please check the settings. Details - " + responseMessage);
             }
         }
 

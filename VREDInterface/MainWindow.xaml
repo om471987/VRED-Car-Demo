@@ -13,7 +13,7 @@
     <Grid HorizontalAlignment="Left" Width="790">
         <Label x:Name="UrlLabel" Content="Enter VRED Server Url" FontWeight="Bold" HorizontalAlignment="Left" Margin="98,115,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="UrlTextBox" HorizontalAlignment="Left" Height="23" Margin="389,126,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="277"/>
-        <Button x:Name="StartButton" Content="Start" HorizontalAlignment="Left" Margin="591,182,0,0" VerticalAlignment="Top" Width="75" Click="StartButton_Click"/>
+        <Button x:Name="StartButton" Content="Start" HorizontalAlignment="Left" Margin="591,179,0,0" VerticalAlignment="Top" Width="75" Click="StartButton_Click"/>
         <Slider x:Name="WheelbaseSlider" HorizontalAlignment="Left" Margin="389,261,0,0" VerticalAlignment="Top" Width="207" RenderTransformOrigin="0.495,-0.757" IsSnapToTickEnabled="True" Ticks="0, .5, 1, 1.5, 2, 2.5, 3" Minimum="0" Maximum ="3"  ValueChanged="WheelbaseSlider_Changed"/>
         <Label x:Name="UpdateWheelbase" Content="Update Wheelbase" FontWeight="Bold" HorizontalAlignment="Left" Margin="98,249,0,0" VerticalAlignment="Top"/>
         <Label x:Name="WheelbaseValueMin" Content="0" HorizontalAlignment="Left" Margin="364,253,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.438,1.385"/>
