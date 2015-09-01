@@ -123,7 +123,7 @@ def isTireOnPuddle():
 	if collisionTireFL.isColliding() and tireRimFL.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimFL.setMaterial(waterColorMaterial)
 	elif collisionTireFL.isColliding() == False and tireRimFL.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire()
+		lock.acquire(False)
 		if dryTimeout[0] == 2:
 			tireRimFL.setMaterial(tireMaterial)
 			dryTimeout[0] = 0
@@ -135,7 +135,7 @@ def isTireOnPuddle():
 	if collisionTireFR.isColliding() and tireRimFR.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimFR.setMaterial(waterColorMaterial)
 	elif collisionTireFR.isColliding() == False and tireRimFR.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire()
+		lock.acquire(False)
 		if dryTimeout[1] == 2:
 			tireRimFR.setMaterial(tireMaterial)
 			dryTimeout[1] = 0
@@ -146,7 +146,7 @@ def isTireOnPuddle():
 	if collisionTireRL.isColliding() and tireRimRL.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimRL.setMaterial(waterColorMaterial)
 	elif collisionTireRL.isColliding() == False and tireRimRL.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire()
+		lock.acquire(False)
 		if dryTimeout[2] == 2:
 			tireRimRL.setMaterial(tireMaterial)
 			dryTimeout[2] = 0
@@ -157,7 +157,7 @@ def isTireOnPuddle():
 	if collisionTireRR.isColliding() and tireRimRR.getMaterial().getName() != waterColorMaterial.getName():
 		tireRimRR.setMaterial(waterColorMaterial)
 	elif collisionTireRR.isColliding() == False and tireRimRR.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire()
+		lock.acquire(False)
 		if dryTimeout[3] == 2:
 			tireRimRR.setMaterial(tireMaterial)
 			dryTimeout[3] = 0
@@ -187,7 +187,7 @@ def updateWheelBase(sliderChangedValue):
 	back = list(wheelBase_Back.getTranslation())
 	back[1] += (sliderChangedValue / 2)
 	wheelBase_Back.setTranslation(back[0], back[1], back[2])
-	
+
 w = vrKey(Key_W)
 w.connect(aswd, 0.0, 1.0)
 
@@ -214,7 +214,7 @@ class DryTiresAfterAWhile(Thread):
 
 	def run(self):
 		while self.running:
-			self.lock.acquire()
+			self.lock.acquire(False)
 			if dryTimeout[0] == 1:
 				dryTimeout[0] = 2
 			if dryTimeout[1] == 1:
