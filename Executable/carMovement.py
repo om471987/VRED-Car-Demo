@@ -47,7 +47,6 @@ steeringTurnSpeed = [3]
 #puddle
 puddleAxis = [[0, 400], [400,0], [-400,0], [200,200], [-200,200],[200,-200], [-200,-200]]
 lock = Lock()
-
 dryTimeout = [0, 0, 0, 0]
 
 for i, t in enumerate(puddleAxis):
@@ -56,10 +55,10 @@ for i, t in enumerate(puddleAxis):
 	newPuddle.setTranslation(t[0], t[1], 0)
 	puddles.append(newPuddle)
 
-collisionTireFL = vrCollision([tireFL], puddles)
-collisionTireFR = vrCollision([tireFR], puddles)
-collisionTireRL = vrCollision([tireRL], puddles)
-collisionTireRR = vrCollision([tireRR], puddles)
+collisionArray = [(vrCollision([tireFL], puddles), tireRimFL),
+				  (vrCollision([tireFR], puddles), tireRimFR),
+				  (vrCollision([tireRL], puddles), tireRimRL),
+				  (vrCollision([tireRR], puddles), tireRimRR)]
 
 
 def updateCamera(x, y, rotation):
@@ -118,53 +117,19 @@ def updateSteeringAngle(anglularForce):
 	steeringAngle = list(steeringWheel.getRotation())[0]
 	steeringAngle += anglularForce * steeringTurnSpeed[0]
 	steeringWheel.setRotation(steeringAngle, 0.0, 90.0)
-	
+
 def isTireOnPuddle():
-	if collisionTireFL.isColliding() and tireRimFL.getMaterial().getName() != waterColorMaterial.getName():
-		tireRimFL.setMaterial(waterColorMaterial)
-	elif collisionTireFL.isColliding() == False and tireRimFL.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire(False)
-		if dryTimeout[0] == 2:
-			tireRimFL.setMaterial(tireMaterial)
-			dryTimeout[0] = 0
-		elif dryTimeout[0] == 0:
-			dryTimeout[0] = 1
-		lock.release()
-			
-		
-	if collisionTireFR.isColliding() and tireRimFR.getMaterial().getName() != waterColorMaterial.getName():
-		tireRimFR.setMaterial(waterColorMaterial)
-	elif collisionTireFR.isColliding() == False and tireRimFR.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire(False)
-		if dryTimeout[1] == 2:
-			tireRimFR.setMaterial(tireMaterial)
-			dryTimeout[1] = 0
-		elif dryTimeout[1] == 0:
-			dryTimeout[1] = 1
-		lock.release()
-
-	if collisionTireRL.isColliding() and tireRimRL.getMaterial().getName() != waterColorMaterial.getName():
-		tireRimRL.setMaterial(waterColorMaterial)
-	elif collisionTireRL.isColliding() == False and tireRimRL.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire(False)
-		if dryTimeout[2] == 2:
-			tireRimRL.setMaterial(tireMaterial)
-			dryTimeout[2] = 0
-		elif dryTimeout[2] == 0:
-			dryTimeout[2] = 1
-		lock.release()
-		
-	if collisionTireRR.isColliding() and tireRimRR.getMaterial().getName() != waterColorMaterial.getName():
-		tireRimRR.setMaterial(waterColorMaterial)
-	elif collisionTireRR.isColliding() == False and tireRimRR.getMaterial().getName() != tireMaterial.getName():
-		lock.acquire(False)
-		if dryTimeout[3] == 2:
-			tireRimRR.setMaterial(tireMaterial)
-			dryTimeout[3] = 0
-		elif dryTimeout[3] == 0:
-			dryTimeout[3] = 1
-		lock.release()
-
+	for i, t in enumerate(collisionArray):
+		if t[0].isColliding() and t[1].getMaterial().getName() != waterColorMaterial.getName():
+			t[1].setMaterial(waterColorMaterial)
+		elif t[0].isColliding() == False and t[1].getMaterial().getName() != tireMaterial.getName():
+			lock.acquire(False)
+			if dryTimeout[i] == 2:
+				t[1].setMaterial(tireMaterial)
+				dryTimeout[i] = 0
+			elif dryTimeout[i] == 0:
+				dryTimeout[i] = 1
+			lock.release()
 
 def changeView():
 	if camera[0] is thirdPersonCamera:
@@ -215,14 +180,10 @@ class DryTiresAfterAWhile(Thread):
 	def run(self):
 		while self.running:
 			self.lock.acquire(False)
-			if dryTimeout[0] == 1:
-				dryTimeout[0] = 2
-			if dryTimeout[1] == 1:
-				dryTimeout[1] = 2
-			if dryTimeout[2] == 1:
-				dryTimeout[2] = 2
-			if dryTimeout[3] == 1:
-				dryTimeout[3] = 2
+			for i, t in enumerate(dryTimeout):
+				if dryTimeout[i] == 1:
+					dryTimeout[i] = 2
+
 			self.lock.release()
 			sleep(2)
 
